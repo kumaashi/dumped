@@ -34,12 +34,12 @@ struct EInput
 		JOYINFO JoyInfo;
 		if(joyGetPos(JOYSTICKID1, &JoyInfo) == JOYERR_NOERROR)
 		{
-			State["Up"]     = (JoyInfo.wYpos    < PWM_N)       ? true : false;
-			State["Down"]   = (JoyInfo.wYpos    > PWM_P)       ? true : false;
-			State["Left"]   = (JoyInfo.wXpos    < PWM_N)       ? true : false;
-			State["Right"]  = (JoyInfo.wXpos    > PWM_P)       ? true : false;
-			State["B0"]     = (JoyInfo.wButtons & JOY_BUTTON1) ? true : false;
-			State["B1"]     = (JoyInfo.wButtons & JOY_BUTTON2) ? true : false;
+			State["Up"]     |= (JoyInfo.wYpos    < PWM_N)       ? true : false;
+			State["Down"]   |= (JoyInfo.wYpos    > PWM_P)       ? true : false;
+			State["Left"]   |= (JoyInfo.wXpos    < PWM_N)       ? true : false;
+			State["Right"]  |= (JoyInfo.wXpos    > PWM_P)       ? true : false;
+			State["B0"]     |= (JoyInfo.wButtons & JOY_BUTTON1) ? true : false;
+			State["B1"]     |= (JoyInfo.wButtons & JOY_BUTTON2) ? true : false;
 		}
 	}
 
