@@ -1,2 +1,2 @@
-Tenuki Input
+EInput Input
 ============
