@@ -1,3 +1,5 @@
+\ http://stackoverflow.com/questions/18246756/what-is-the-most-common-filename-extension-of-a-forth-source-code-file
+
 : TEST                      \ test                    
   dup sin . CR              \ n1 sin[n1] print        
   drop                      \ n1                      
