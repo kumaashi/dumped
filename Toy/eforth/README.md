@@ -1,5 +1,8 @@
 eForth
 ======
 
-eForth is tiny Forth interpreter.
+eForth is tiny forth interpreter.
+
+Todo:
+	do while loop util(2dup, rot...) win32
 
