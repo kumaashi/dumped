@@ -18,29 +18,29 @@
 //-----------//-----------//-----------//-----------//-----------//-----------
 #include <windows.h>
 #include <d3d11.h>
-#include <d3dx11.h>
-#include <d3dx9.h>
+//#include <d3dx11.h>
+//#include <d3dx9.h>
 #include <d3dcommon.h>
 #include <D3Dcompiler.h>
-#include <xnamath.h>
+//#include <xnamath.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
+#include <vector>
+#include <string>
 #include "param.h"
 
 //-----------//-----------//-----------//-----------//-----------//-----------
 // lib
 //-----------//-----------//-----------//-----------//-----------//-----------
-#pragma comment(lib, "winmm.lib")
-#pragma comment(lib, "user32.lib")
-#pragma comment(lib, "gdi32.lib")
-#pragma comment(lib, "dxguid.lib")
-#pragma comment(lib, "d3d9.lib")
-#pragma comment(lib, "d3dx9.lib")
+#pragma comment(lib, "D3dcompiler.lib")
+#pragma comment(lib, "D3dcompiler.lib")
 #pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "d3dx11.lib")
 #pragma comment(lib, "dinput8.lib")
-
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "gdi32.lib")
+#pragma comment(lib, "user32.lib")
+#pragma comment(lib, "winmm.lib")
 
 //-----------//-----------//-----------//-----------//-----------//-----------
 // macrot
@@ -52,12 +52,20 @@
 #define E_NULL_RETURN(str, x) {             if(!(x))              { printf("ERROR : %s : %d NULL   : %s\n", __FILE__, __LINE__,     str); return E_FAIL; } }
 #define SLEEP_60HZ            16//yam
 
+struct float4 {
+	float x, y, z, w;
+};
+
+struct matrix {
+	float4 m[4];
+};
+
 
 struct ShaderConst {
-  XMFLOAT4 Const;
-  XMMATRIX mWorld;
-  XMMATRIX mView;
-  XMMATRIX mProj;
+  float4   Const;
+  matrix   mWorld;
+  matrix   mView;
+  matrix   mProj;
   FLOAT    Indicate;
 };
 
@@ -98,8 +106,7 @@ HRESULT D3DCreateBuffer(
   UINT MiscFlags = 0,
   UINT StructureByteStride = 0);
 
-HRESULT D3DCompileShaderFromFile(
-  LPCSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut );
+HRESULT D3DCompileShaderFromFile( LPCSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut );
 
 HRESULT D3DCreateTexture(
   ID3D11Texture2D           **ppTex,
@@ -114,6 +121,44 @@ HRESULT D3DCreateTexture(
 
 HRESULT D3DCreateBufferUAV(ID3D11Buffer **pBuffer, ID3D11UnorderedAccessView **ppUAV, UINT ByteWidth, UINT Stride);
 HRESULT D3DCreateSamplerState(ID3D11SamplerState **ppSamplerLinear, const D3D11_SAMPLER_DESC *pdesc = NULL);
+
+
+//////////////////////////////////////////////////////////////////////////////////
+// Util
+//////////////////////////////////////////////////////////////////////////////////
+class File {
+	FILE *fp;
+	std::vector<unsigned char> buf;
+public:
+	File() { fp = NULL; }
+	~File() { Close(); }
+
+	void Close() {
+		if(fp) fclose(fp);
+		fp = NULL;
+		buf.resize(0);
+	}
+
+	int Open(const char *fname, const char *mode) {
+		Close();
+		fp = fopen(fname, mode);
+		if(!fp) return -1;
+
+		fseek(fp, 0, SEEK_END);
+		int size = ftell(fp);
+		fseek(fp, 0, SEEK_SET);
+
+		buf.resize(size);
+		fread(&buf[0], 1, size, fp);
+
+		fclose(fp);
+		return buf.size();
+	}
+	void *Buf() { return (void *)&buf[0]; }
+};
+
+
+//Entry
 void    InitScene();
 void    TermScene();
 void    DoScene();

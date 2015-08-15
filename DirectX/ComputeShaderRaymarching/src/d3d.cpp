@@ -188,16 +188,20 @@ HRESULT D3DInitDevice(HWND hWnd, UINT width ,UINT height, LPCSTR fxfilename) {
 //  D3DCompileShaderFromFile
 //
 //--------------------------------------------------------------------------------------------------------------
-HRESULT D3DCompileShaderFromFile( LPCSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut ) {
-  HRESULT hr = S_OK;
-  DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-  ID3DBlob* pErrorBlob = NULL;
-  hr = D3DX11CompileFromFile( szFileName, NULL, NULL, szEntryPoint, szShaderModel, dwShaderFlags, 0, NULL, ppBlobOut, &pErrorBlob, NULL );
-  if(FAILED(hr)) {
-    printf("ERROR:%s : %s\n", __FUNCTION__, pErrorBlob->GetBufferPointer());
-  }
-  RELEASE( pErrorBlob );
-  return hr;
+HRESULT D3DCompileShaderFromFile( LPCSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut )
+{
+	std::string filename = szFileName;
+	std::wstring wfilename = szFileName;
+	HRESULT hr = S_OK;
+	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_OPTIMIZATION_LEVEL3 | D3DCOMPILE_PREFER_FLOW_CONTROL;
+	ID3DBlob* pErrorBlob = nullptr;
+	hr = D3DCompileFromFile( wfilename.c_str(), nullptr, nullptr, szEntryPoint, szShaderModel, dwShaderFlags, 0, ppBlobOut, &pErrorBlob);
+	if(pErrorBlob) {
+		printf("INFO : %s\n", (char *)pErrorBlob->GetBufferPointer());
+		RELEASE(pErrorBlob);
+	}
+	printf("%s : %s %s::%08X\n", __FUNCTION__, szEntryPoint, szShaderModel, hr);
+	return hr;
 }
 
 //--------------------------------------------------------------------------------------------------------------
