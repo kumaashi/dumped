@@ -129,8 +129,9 @@ HRESULT D3DCreateSamplerState(ID3D11SamplerState **ppSamplerLinear, const D3D11_
 class File {
 	FILE *fp;
 	std::vector<unsigned char> buf;
+	int size;
 public:
-	File() { fp = NULL; }
+	File() { fp = NULL; size = 0; }
 	~File() { Close(); }
 
 	void Close() {
@@ -145,7 +146,7 @@ public:
 		if(!fp) return -1;
 
 		fseek(fp, 0, SEEK_END);
-		int size = ftell(fp);
+		size = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 
 		buf.resize(size);
@@ -155,6 +156,7 @@ public:
 		return buf.size();
 	}
 	void *Buf() { return (void *)&buf[0]; }
+	int Size() { return size; }
 };
 
 
