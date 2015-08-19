@@ -11,10 +11,10 @@
 //-----------//-----------//-----------//-----------//-----------//-----------
 // macro
 //-----------//-----------//-----------//-----------//-----------//-----------
-#define ScreenX            800
-#define ScreenY            600
-#define WindowX            1024
-#define WindowY            768
+#define ScreenX            1280
+#define ScreenY            720
+#define WindowX            1280
+#define WindowY            720
 #define GroupX             32
 #define GroupY             32
 

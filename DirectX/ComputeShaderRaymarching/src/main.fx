@@ -31,7 +31,6 @@ float4 vs_main(float3 pos : POSITION) : SV_POSITION {
   return float4(pos, 1);
 }
 
-
 //--------------------------------------------------------------------------------------
 //
 // raymarching
@@ -54,9 +53,11 @@ float map(in float3 p) {
   float3 tp = p + hash(p) * 0.002;
   float  fq = 0;
   fq = 11; float kk  = 0.0125 * (sin(p.x * fq) +  sin(p.y * fq) +  sin(p.z * fq));
-  fq  = 6; float kk2 = 0.0325 * (sin(p.x * fq / 2) +  sin(p.y * fq / 2) +  sin( 1.7* sin(p.z * fq)));
-  if(0) {
-    k = (length(abs(tp % 20) - 10) - 3) + kk + kk2;
+  fq  = 6; float kk2 = 0.0325 * (sin(p.x * fq) +  sin(p.y * fq) +  sin(sin(p.z * fq)));
+  if(1) {
+    float3 ap = tp;
+    rot(ap.xy, Time.x * 0.3);
+    k = (length(abs(ap % 20) - 10) - 3) + kk + kk2;
   }
   if(0) {
     float k1 = (length(abs(tp.yz % 50) - 25) - 4.5) + kk + kk2;
@@ -69,7 +70,7 @@ float map(in float3 p) {
     tp += 5.5;
     float k1 = (length(abs((tp.yz) % 80) - 40) - 5.5) + kk + kk2;
     float k2 = (length(abs((tp.zx) % 100) - 50) - 20.5) + kk + kk2;
-    tp.x += sin( 5.4 * sin(tp.z * 0.14 )) * 1.4;
+    tp.x += sin( 5.4 * sin(tp.z * 0.14 )) * 0.3;
     tp.y += sin( 7.4 * cos(tp.z * 0.12 ));
     float k3 = (length(abs((tp.xy) % 30) - 15) - 2.5) + kk + kk2; 
     k = min(k1, min(k2, min(k3, k)));
@@ -138,21 +139,18 @@ void cs_main(uint3 tid : SV_DispatchThreadID)
   float x = -1 + (2 * tx / float(ScreenX));
   float y = -1 + (2 * ty / float(ScreenY));
   
+	/*
   if(abs(y) > 0.8) {
     buffer[index] = 0;
     return ;
   }
-  /*
-  if(abs(x) > 0.6) {
-    buffer[index] = 0;
-    return ;
-  }
-  */
+	*/
+
   float3 pos, dir;
   float2 uv     = float2(x, -y);
   getcamera(uv, pos, dir);
   
-  float  d      = inter(pos, dir, 64, 0, 0.03, 0.9);
+  float  d      = inter(pos, dir, 64, 0, 0.03, 1.0);
   if(d > 1024) {
     buffer[index] = d;
     return ;
@@ -179,17 +177,14 @@ float4 ps_main( float4 p : SV_POSITION ) : SV_Target {
   uint   index3 = uint(p.x +-1) + uint(p.y  + 1) * ScreenX;
   uint   index4 = uint(p.x +-1) + uint(p.y  +-1) * ScreenX;
   float3 result = (cstex[index1] + cstex[index2] + cstex[index3] + cstex[index4]).xyz / 4;
-  result = lerp( result, cstex[index].xyz, 0.95 );
+  result = lerp( result, cstex[index].xyz, 0.5 );
   
   float depth = cstex[index].w;
-  result     *= float3(1.4, 1.04, 1.0);
-  result      = pow(result, 1.4);
-  
-  //gamma
+  //result     *= float3(1.4, 1.04, 1.0);
   result    = pow(result, 0.4545);
   
   //fog
-  result   = result + (float3(0.95, 0.75, 0.55) * depth) * 0.004;
+  result   = result + (float3(1,2,3) * depth) * 0.004;
   
   //tekitou
   result.x += hash(result.x)  * 0.015;
