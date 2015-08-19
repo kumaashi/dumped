@@ -190,20 +190,6 @@ HRESULT D3DInitDevice(HWND hWnd, UINT width ,UINT height, LPCSTR fxfilename) {
 //--------------------------------------------------------------------------------------------------------------
 HRESULT D3DCompileShaderFromFile( LPCSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut )
 {
-#if 0
-	std::string filename = szFileName;
-	std::wstring wfilename = szFileName;
-	HRESULT hr = S_OK;
-	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_OPTIMIZATION_LEVEL3 | D3DCOMPILE_PREFER_FLOW_CONTROL;
-	ID3DBlob* pErrorBlob = nullptr;
-	hr = D3DCompileFromFile( wfilename.c_str(), nullptr, nullptr, szEntryPoint, szShaderModel, dwShaderFlags, 0, ppBlobOut, &pErrorBlob);
-	if(pErrorBlob) {
-		printf("INFO : %s\n", (char *)pErrorBlob->GetBufferPointer());
-		RELEASE(pErrorBlob);
-	}
-	printf("%s : %s %s::%08X\n", __FUNCTION__, szEntryPoint, szShaderModel, hr);
-	return hr;
-#endif
 	File file;
 	file.Open(szFileName, "r");
 	HRESULT hr = S_OK;

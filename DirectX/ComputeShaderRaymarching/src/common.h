@@ -18,11 +18,8 @@
 //-----------//-----------//-----------//-----------//-----------//-----------
 #include <windows.h>
 #include <d3d11.h>
-//#include <d3dx11.h>
-//#include <d3dx9.h>
 #include <d3dcommon.h>
 #include <D3Dcompiler.h>
-//#include <xnamath.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
