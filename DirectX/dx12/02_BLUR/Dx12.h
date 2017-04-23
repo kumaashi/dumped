@@ -1167,63 +1167,49 @@ public:
 		DeleteConstant();
 		DeleteShader();
 		DeleteRenderTarget();
-		auto it = buffermapper.begin();
-		auto ite = buffermapper.end();
-		while (it != ite) {
-			if (it->second) {
-				printf("%s : %s : Delete buffermapper\n", __FUNCTION__, it->first.c_str());
-				delete it->second;
+		for (auto it : buffermapper) {
+			if (it.second) {
+				printf("%s : %s : Delete buffermapper\n", __FUNCTION__, it.first.c_str());
+				delete it.second;
 			}
-			it++;
 		}
 		if (device) delete device;
 	}
 
 	void DeleteConstant() {
-		auto it = cache_constant.begin();
-		auto ite = cache_constant.end();
-		while (it != ite) {
-			printf("%s : %s : Delete cache_constant\n", __FUNCTION__, it->first.c_str());
-			delete it->second;
-			it++;
+		for (auto it : cache_constant) {
+			printf("%s : %s : Delete cache_constant\n", __FUNCTION__, it.first.c_str());
+			delete it.second;
 		}
+		cache_constant.clear();
 	}
 	void DeleteTexture() {
-		auto it = cache_texture.begin();
-		auto ite = cache_texture.end();
-		while (it != ite) {
-			printf("%s : %s : Delete cache_texture\n", __FUNCTION__, it->first.c_str());
-			delete it->second;
-			it++;
+		for (auto it : cache_texture) {
+			printf("%s : %s : Delete cache_texture\n", __FUNCTION__, it.first.c_str());
+			delete it.second;
 		}
+		cache_texture.clear();
 	}
 	void DeleteVertex() {
-		auto it = cache_vertex.begin();
-		auto ite = cache_vertex.end();
-		while (it != ite) {
-			printf("%s : %s : Delete cache_vertex\n", __FUNCTION__, it->first.c_str());
-			delete it->second;
-			it++;
+		for (auto it : cache_vertex) {
+			printf("%s : %s : Delete cache_vertex\n", __FUNCTION__, it.first.c_str());
+			delete it.second;
 		}
+		cache_vertex.clear();
 	}
 
 	void DeleteRenderTarget() {
-		auto it = cache_rendertarget.begin();
-		auto ite = cache_rendertarget.end();
-		while (it != ite) {
-			printf("%s : %s : Delete cache_rendertarget\n", __FUNCTION__, it->first.c_str());
-			delete it->second;
-			it++;
+		for (auto it : cache_rendertarget) {
+			printf("%s : %s : Delete cache_rendertarget\n", __FUNCTION__, it.first.c_str());
+			delete it.second;
 		}
+		cache_rendertarget.clear();
 	}
 
 	void DeleteShader() {
-		auto it = cache_shader.begin();
-		auto ite = cache_shader.end();
-		while (it != ite) {
-			printf("%s : %s : Delete cache_shader\n", __FUNCTION__, it->first.c_str());
-			delete it->second;
-			it++;
+		for (auto it : cache_shader) {
+			printf("%s : %s : Delete cache_shader\n", __FUNCTION__, it.first.c_str());
+			delete it.second;
 		}
 		cache_shader.clear();
 	}
