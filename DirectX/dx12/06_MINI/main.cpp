@@ -713,31 +713,6 @@ float frandom2() {
 }
 
 int main() {
-	struct Scene {
-		int rtvCount = 1;
-		int effectNumber = 0;
-		int GetEffectNumber(int num) {
-			return effectNumber;
-		}
-		void SetEffectNumber(int num) {
-			effectNumber = 0;
-		}
-		void SetRTVCount(int val) {
-			rtvCount = val;
-		}
-		int GetRTVCount() {
-			return rtvCount;
-		}
-		std::vector<Device::Vector> vvector;
-		void GetVector(std::vector<Device::Vector> &dest) {
-			dest = vvector;
-		}
-		virtual void Init() = 0;
-		virtual void Update() = 0;
-	};	
-	
-	
-	
 	auto hWnd = win_init("minidx12", Device::Width, Device::Height);
 	Device device(hWnd);
 
@@ -840,9 +815,7 @@ int main() {
 			}
 			device.End(rtvCount);
 		}
-		
 		device.Present();
-
 		present_count++;
 	}
 	

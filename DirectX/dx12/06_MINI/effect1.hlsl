@@ -28,7 +28,16 @@ PSOutput PSMain(const VSOutput input)
 	float3 texinfo0;
 	ColorTexture0.GetDimensions(0, texinfo0.x, texinfo0.y, texinfo0.z);
 	float2 uv = input.Position.xy / texinfo0.xy;
-	output.Color0 = ColorTexture2.Sample(ColorSmp, uv);
+	float2 duv = (uv * 2.0) - 1.0;
+	float4 color2 = saturate(ColorTexture2.Sample(ColorSmp, uv));
+	output.Color0 = color2 * (1.0 - dot(duv * 0.5, duv));
+	
+	//debug
+	if(uv.x > 0.5) {
+		float4 color3 = saturate(ColorTexture3.Sample(ColorSmp, uv));
+		output.Color0 = color3 * (1.0 - dot(duv * 0.5, duv));
+	}
+	
     return output;
 }
 
