@@ -6,7 +6,7 @@ VSOutput VSMain(const VSInput input)
 	VSOutput output = (VSOutput)0;
 	output.Position = float4(input.Position * float3(1,1,0), 1.0f);
 	output.Normal   = input.Normal;
-	output.Color    = float4(1,1,1,1);
+	output.Color	= float4(1,1,1,1);
 	output.TexCoord = output.Position.xy;
 	return output;
 }
@@ -16,71 +16,67 @@ void GSMain(triangle VSOutput inputvertex[3], inout TriangleStream<VSOutput> gss
 	VSOutput output = (VSOutput)0;
 	for(int i = 0; i < 3; i++) {
 		VSOutput input = inputvertex[i];
-		output.Position      = input.Position;
-		output.Normal        = input.Normal;
-		output.TexCoord      = input.TexCoord;
+		output.Position	  = input.Position;
+		output.Normal		= input.Normal;
+		output.TexCoord	  = input.TexCoord;
 		gsstream.Append(output);
-  	}
-  	gsstream.RestartStrip();
+	}
+	gsstream.RestartStrip();
 }
 
 [RootSignature(RSDEF)]
-#define BLUR_POWER 16.0
+#define BLUR_POWER 12.0
+
+
+
+float4 GetColor(float2 uv) {
+	return ColorTexture0.Sample(ColorSmp, uv);
+}
+
 PSOutput PSMain(const VSOutput input)
 {
-    PSOutput output = (PSOutput)0;
-    /*
+	PSOutput output = (PSOutput)0;
+	
 	float3 texinfo0;
 	ColorTexture0.GetDimensions(0, texinfo0.x, texinfo0.y, texinfo0.z);
-	//float2 uv = input.Position.xy / texinfo0.xy;
-	float2 uv = (input.TexCoord.xy) * 0.5 + 0.5;
-	uv.y = 1.0 - uv.y;
-	float2 duv = (uv * 2.0) - 1.0;
-	output.Color0 = saturate(ColorTexture2.SampleLevel(ColorSmp, uv, 0.5));
-	if(uv.x > 0.5) {
-		output.Color0 = saturate(ColorTexture1.SampleLevel(ColorSmp, uv, 0.0));
-		output.Color0 = saturate(ColorTexture3.SampleLevel(ColorSmp, uv, 0.5));
-	}
-	output.Color0 *= (1.0 - dot(duv * 0.5, duv));
-	*/
-	float3 texinfo0;
-	ColorTexture0.GetDimensions(0, texinfo0.x, texinfo0.y, texinfo0.z);
-	//float2 uv = (input.TexCoord.xy) * 0.5 + 0.5;
 	float2 uv = input.Position.xy / texinfo0.xy;
+	
 	float2 duv = (uv * 2.0) - 1.0;
-    float2 center = texinfo0.xy * 0.5;
-    float vig;
-    float4 col1, col2, col3, col4;
-    vig = distance(center, input.Position.xy) / texinfo0.x;
-    float2 pixel_size = 1.0 / (texinfo0.xy + 0.5) * (vig * BLUR_POWER);
-    col1 = ColorTexture0.Sample(ColorSmp, uv );
-    col2 = ColorTexture0.Sample(ColorSmp, uv + float2(0.0, pixel_size.y));
-    col3 = ColorTexture0.Sample(ColorSmp, uv + float2(pixel_size.x, 0.0));
-    col4 = ColorTexture0.Sample(ColorSmp, uv + pixel_size);
+	float2 center = texinfo0.xy * 0.5;
+	float vig;
+	float4 col1 = float4(0, 0, 0, 0);
+	float4 col2 = float4(0, 0, 0, 0);
+	float4 col3 = float4(0, 0, 0, 0);
+	float4 col4 = float4(0, 0, 0, 0);
+	vig = distance(center, input.Position.xy) / texinfo0.x;
+	float2 pixel_size = 1.0 / (texinfo0.xy + 0.5) * (vig * BLUR_POWER);
+	col1 += GetColor( uv );
+	col2 += GetColor( uv + float2(0.0, pixel_size.y));
+	col3 += GetColor( uv + float2(pixel_size.x, 0.0));
+	col4 += GetColor( uv + pixel_size);
+	float2 slide = float2(0.005, 0.0) * vig + float2(0.001, 0.0);
+	float4 col5 = saturate(GetColor(uv - slide));
+	float4 col6 = saturate(GetColor(uv + slide));
+	col1.r += col5.r;
+	col1.b += col6.b;
 
-    float2 slide = float2(0.008, 0.0) * vig + float2(0.005, 0.0);
-    float4 col5 = saturate(ColorTexture0.Sample(ColorSmp, uv - slide));
-    float4 col6 = saturate(ColorTexture0.Sample(ColorSmp, uv + slide));
-    col1.r += col5.r;
-    col1.b += col6.b;
-    
-    col2.r += col5.r;
-    col2.b += col6.b;
-    
-    col3.r += col5.r;
-    col3.b += col6.b;
-    
-    col4.r += col5.r;
-    col4.b += col6.b;
-    col1 = saturate(col1);
-    col2 = saturate(col2);
-    col3 = saturate(col3);
-    col4 = saturate(col4);
-    
-    output.Color0 = (col1 + col2 + col3 + col4) * 0.25;
+	col2.r += col5.r;
+	col2.b += col6.b;
+
+	col3.r += col5.r;
+	col3.b += col6.b;
+
+	col4.r += col5.r;
+	col4.b += col6.b;
+	col1 = saturate(col1);
+	col2 = saturate(col2);
+	col3 = saturate(col3);
+	col4 = saturate(col4);
+
+	output.Color0 = (col1 + col2 + col3 + col4) * 0.25;
 
 	output.Color0 *= (1.0 - dot(duv * 0.5, duv));
-    return output;
+	return output;
 }
 
 

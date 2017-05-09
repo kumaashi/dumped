@@ -31,7 +31,8 @@ struct VSOutput
 	float4  Color         : COLOR;
 	float4  WorldPosition : TEXCOORD1;
 	float4  TransPosition : TEXCOORD2;
-	uint    Id            : TEXCOORD3;
+	float4  ViewPosition  : TEXCOORD3;
+	uint    Id            : TEXCOORD4;
 };
 
 
