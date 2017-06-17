@@ -1,0 +1,18 @@
+{
+  "name": "pipi",
+  "version": "1.0.0",
+  "description": "pipi",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "k-nakayama-pg",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.1.2",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "node-line-bot-api": "^0.1.4",
+    "request": "^2.75.0"
+  }
+}
