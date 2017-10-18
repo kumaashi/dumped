@@ -168,28 +168,37 @@ int main() {
 	const char *appname = "vkif";
 	const uint32_t width = 1280;
 	const uint32_t height = 720;
+	
+	//create window
 	HWND hWnd = win_init(appname, width, height);
 	HINSTANCE hInst = GetModuleHandle(0);
+	
+	//Create GPU instance 
 	VulkanGpu *gpu = new VulkanGpu(appname, hWnd, hInst, width, height, BindDebugFunction);
+	
+	//Get BackBuffer
+	std::vector<uint32_t> vBackBufferRenderPass;
 	std::vector<uint32_t> vBackBufferImage;
 	std::vector<uint32_t> vBackBufferDepth;
+
 	gpu->GetBackBufferImage(vBackBufferImage);
 	gpu->GetBackBufferDepth(vBackBufferDepth);
+	gpu->GetBackBufferRenderPass(vBackBufferRenderPass);
+
 	for(auto &x : vBackBufferImage) {
 		printf("vBackBufferImage = %d\n", x);
 	}
 	for(auto &x : vBackBufferDepth) {
 		printf("vBackBufferDepth = %d\n", x);
 	}
-	
-	
+
 	uint32_t mrt_vertex_shader     = 0;
 	uint32_t mrt_fragment_shader   = 0;
 	uint32_t present_vertex_shader   = 0;
 	uint32_t present_fragment_shader = 0;
-	
+
+	const char *complier_name = "glslangValidator.exe";
 	{
-		const char *complier_name = "glslangValidator.exe";
 		const char *filehead = "basic";
 		std::vector<unsigned char> vertshaderdata;
 		std::vector<unsigned char> fragshaderdata;
@@ -199,7 +208,6 @@ int main() {
 		mrt_fragment_shader = gpu->CreateShader("main", fragshaderdata.data(), fragshaderdata.size(), VulkanGpu::ShaderData::TYPE_FRAGMENT);
 	}
 	{
-		const char *complier_name = "glslangValidator.exe";
 		const char *filehead = "present";
 		std::vector<unsigned char> vertshaderdata;
 		std::vector<unsigned char> fragshaderdata;
@@ -212,12 +220,14 @@ int main() {
 	printf("mrt_fragment_shader    =%d\n",  mrt_fragment_shader   );
 	printf("present_vertex_shader  =%d\n",  present_vertex_shader   );
 	printf("present_fragment_shader=%d\n",  present_fragment_shader );
+
 	static std::vector<VkVertexInputAttributeDescription> vertexInputAttr = {
 		{0, 0, VK_FORMAT_R32G32B32_SFLOAT,    sizeof(float) * 0},
 		{1, 0, VK_FORMAT_R32G32B32_SFLOAT,    sizeof(float) * 3},
 		{2, 0, VK_FORMAT_R32G32_SFLOAT,       sizeof(float) * 6},
 		{3, 0, VK_FORMAT_R32G32B32A32_SFLOAT, sizeof(float) * 8},
 	};
+
 	std::vector<uint32_t> mrtShaders = {
 		mrt_vertex_shader,
 		mrt_fragment_shader,
@@ -267,18 +277,18 @@ int main() {
 	vertex.pos[2] =  0.0f;
 	vVertex.push_back(vertex);
 	auto handle_vertex = gpu->CreateBuffer(sizeof(VertexFormat) * 6, 0, vVertex.data());
-
-
 	std::vector<uint32_t> vColorRenderTargets;
 	std::vector<uint32_t> vDepthRenderTargets;
 	for(int i = 0 ; i < 4; i++) {
 		vColorRenderTargets.push_back(gpu->CreateImage(width, height, VulkanGpu::ImageData::TYPE_RENDERTARGET));
 	}
 	vDepthRenderTargets.push_back(gpu->CreateImage(width, height, VulkanGpu::ImageData::TYPE_DEPTH));
-	uint32_t mrt_renderpass   = gpu->CreateRenderPass(vColorRenderTargets, vDepthRenderTargets, width, height);
-	uint32_t mrt_pipeline     = gpu->CreatePipeline(mrt_renderpass, mrtShaders, vertexInputAttr, sizeof(VertexFormat));
+	
 	uint32_t presentPipeline0 = gpu->CreatePipeline(0, presentShaders, vertexInputAttr, sizeof(VertexFormat));
 	uint32_t presentPipeline1 = gpu->CreatePipeline(1, presentShaders, vertexInputAttr, sizeof(VertexFormat));
+	
+	uint32_t mrt_renderpass   = gpu->CreateRenderPass(vColorRenderTargets, vDepthRenderTargets, width, height);
+	uint32_t mrt_pipeline     = gpu->CreatePipeline(mrt_renderpass, mrtShaders, vertexInputAttr, sizeof(VertexFormat));
 
 	printf("mrt_renderpass  =%d\n", mrt_renderpass  );
 	printf("mrt_pipeline    =%d\n", mrt_pipeline    );
@@ -290,7 +300,7 @@ int main() {
 		printf("!!!!!!! index = %d\n", index);
 		uint32_t present_index = gpu->NextImage(index);
 		printf("!!!!!!! present_index = %d\n", present_index);
-		gpu->BeginPass(present_index, 1, 1, 1, 1);
+		gpu->BeginPass(vBackBufferRenderPass[present_index % 2], 1, 1, 1, 1);
 		{
 			gpu->SetDescriptorSets(present_index);
 			gpu->UpdateDescripterSets();

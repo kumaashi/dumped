@@ -155,10 +155,14 @@ public:
 	void GetBackBufferImage(std::vector<uint32_t> &dest) {
 		dest = backbuffer_image;
 	}
+
 	void GetBackBufferDepth(std::vector<uint32_t> &dest) {
 		dest = backbuffer_depth;
 	}
-	
+
+	void GetBackBufferRenderPass(std::vector<uint32_t> &dest) {
+		dest = backbuffer_renderpass;
+	}
 	
 	VulkanGpu(const char *appname, HWND hWnd, HINSTANCE hInst, uint32_t width, uint32_t height, void (*instance_cb)(VkInstance) = nullptr) {
 		//memset(this, 0, sizeof(*this));
