@@ -228,6 +228,19 @@ struct Device {
 	}
 
 	~Device() {
+		for(int index = 0 ; index < MAX_BACKBUFFER; index++) {
+			auto data = &fencedata[index];
+			commandlist = commandlists[index];
+			allocator = allocators[index];
+			queue->Signal(data->fence, data->value);
+			auto cvalue = data->fence->GetCompletedValue();
+			if (cvalue != data->value) {
+				data->fence->SetEventOnCompletion(data->value, data->hEvent);
+				WaitForSingleObject(data->hEvent, INFINITE);
+			}
+			allocator->Reset();
+			commandlist->Reset(allocator, 0);
+		}
 		RELEASE_MAP(pipeline_states);
 		RELEASE_MAP(root_signatures);
 		RELEASE_MAP(vertex_resources);
