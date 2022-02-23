@@ -3,6 +3,7 @@ CLang
 
 
 
-XOR
+* XOR
+
 ![XOR Image](./image/xor.png)
 
