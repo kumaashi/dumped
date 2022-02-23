@@ -12,6 +12,7 @@
 
 ![MRND Image](./image/mrnd.png)
 
+---
 
 ## win32createconsolescreenbuffer
 
