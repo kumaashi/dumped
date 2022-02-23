@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-uint32_t mrand() {
+uint32_t mrnd() {
 	static uint32_t a = 1;
 	static uint32_t b = 2345678;
 	static uint32_t c = 9012345;
@@ -12,12 +12,12 @@ uint32_t mrand() {
 	return (a >> 16);
 }
 
-float fmrand() {
-	return (float)mrand() / float(0xFFFF);
+float fmrnd() {
+	return (float)mrnd() / float(0xFFFF);
 }
 
 int main() {
 	for(int i =0  ; i < 10; i++)
-		printf("%f\n", fmrand());
+		printf("%f\n", fmrnd());
 	return 0;
 }
