@@ -22,5 +22,5 @@
 
 ## ConsoleBaseGame since 2000??
 
-![GameForward Image](./image/GameForward.png)
+![GameForward Image](./image/game_forward.png)
 
