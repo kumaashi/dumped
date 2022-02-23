@@ -1,14 +1,14 @@
-CLang
+# CLang
 ----
 
 
-# XOR
+## XOR
 
 ![XOR Image](./image/xor.png)
 
 ---
 
-# MRND
+## MRND
 
 ![MRND Image](./image/mrnd.png)
 
