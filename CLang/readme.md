@@ -13,3 +13,7 @@
 ![MRND Image](./image/mrnd.png)
 
 
+## win32createconsolescreenbuffer
+
+![W32CCSB Image](./image/win32ccsb.png)
+
