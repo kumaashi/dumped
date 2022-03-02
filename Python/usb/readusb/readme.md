@@ -11,9 +11,9 @@ apt install python3-usb
 
 
 
-## How to use
+## How to use```
 sudo python3 readpy.py
-
+```
 and do fiddle the XBOX controller to hard.
 
 ```text
