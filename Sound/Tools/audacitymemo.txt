@@ -1,0 +1,7 @@
+*audacity memo*
+ASIOSDK_DIR=
+mkdir build
+cd build
+cmake .. -Daudacity_has_asio_support=On  -G "Visual Studio 17 2022" -A x64
+msbuild with release mode.
+
